@@ -4,7 +4,7 @@ from venv import logger
 import numpy as np
 import time
 import logging
-from Bio import SeqIO
+# from Bio import SeqIO
 from multiprocessing import Pool, cpu_count, pool
 
 # Setup logging
