@@ -39,23 +39,25 @@ def traceback(H, SeqA, SeqB, match, mismatch, gap):
     """
     Traceback through the scoring matrix to find the optimal local alignment
     """
-    i, j, = np.unravel_index(np.argmax(H), H.shape)
+    i, j, = len(SeqA) - 1, len(SeqB) - 1
     align1, align2 = [], []
 
     while H[i, j] != 0:
-        if H[i, j] == H[i - 1, j - 1] + pairwise_score(SeqA[i - 1], SeqB[j - 1], match, mismatch):
+        if i > 0 and j > 0 and H[i, j] == H[i - 1, j - 1] + pairwise_score(SeqA[i - 1], SeqB[j - 1], match, mismatch):
             align1.append(SeqA[i - 1])
             align2.append(SeqB[j - 1])
             i -= 1
             j -= 1
-        elif H[i, j] == H[i - 1, j] + gap:
+        elif i > 0 and H[i, j] == H[i - 1, j] + gap:
             align1.append(SeqA[i - 1])
             align2.append('-')
             i -= 1
-        else:
+        elif j > 0 and H[i, j] == H[i, j - 1] + gap:
             align1.append('-')
             align2.append(SeqB[j - 1])
             j -= 1
+        else:
+            break
 
     score = np.max(H)
     return ''.join(align1[::-1]), ''.join(align2[::-1]), score
