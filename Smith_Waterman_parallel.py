@@ -67,7 +67,7 @@ def traceback(scoring_matrix: np.ndarray, sequence1: str, sequence2: str, match:
 # Parallel Smith-Waterman alignment function
 def smith_waterman_parallel(sequence1: str, sequence2: str, match: str, mismatch: str, gap: int, num_processes: int) -> tuple[str, str, int]:
     """
-    Perform the Smith-Watenman local alignment usign parallel processing
+    Perform the Smith-Waterman local alignment using parallel processing
     """
     m, n = len(sequence1), len(sequence2)
     scoring_matrix = np.zeros((m + 1, n + 1))
@@ -152,7 +152,6 @@ def main() -> None:
             except ValueError as e:
                 print(f"Invalid input: {e}")
 
-        
         while True:
             try:
                 num_processes = int(input(f"Enter the number of processes (1-{cpu_count()}): "))
