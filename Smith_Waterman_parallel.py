@@ -7,14 +7,14 @@ import numpy as np
 import time
 import logging
 # from Bio import SeqIO
-from multiprocessing import Pool, cpu_count, pool
+from multiprocessing import Pool, cpu_count
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 # Define scoring function
-def pairwise_score(n, m, match, mismatch):
+def pairwise_score(n: str, m: str, match: int, mismatch: int) -> int:
     """
     Define the score for aligning two characters
     """
@@ -24,7 +24,7 @@ def pairwise_score(n, m, match, mismatch):
         return mismatch
     
 # Compute cells
-def compute_cells(args):
+def compute_cells(args: tuple[int, int, str, str, int, int, int, np.ndarray]) -> tuple[int, int, int]:
     """
     Compute the score for a specific cell in the scoring matrix
     """
@@ -37,7 +37,7 @@ def compute_cells(args):
     return scoring_matrix[i, j], i, j
 
 # Traceback function
-def traceback(scoring_matrix, sequence1, sequence2, match, mismatch, gap):
+def traceback(scoring_matrix: np.ndarray, sequence1: str, sequence2: str, match: int, mismatch: int, gap: int) -> tuple[str, str, int]:
     """
     Traceback through the scoring matrix to find the optimal local alignment
     """
@@ -65,7 +65,7 @@ def traceback(scoring_matrix, sequence1, sequence2, match, mismatch, gap):
     return ''.join(alignment1[::-1]), ''.join(alignment2[::-1]), score
 
 # Parallel Smith-Waterman alignment function
-def smith_waterman_parallel(sequence1, sequence2, match, mismatch, gap, num_processes):
+def smith_waterman_parallel(sequence1: str, sequence2: str, match: str, mismatch: str, gap: int, num_processes: int) -> tuple[str, str, int]:
     """
     Perform the Smith-Watenman local alignment usign parallel processing
     """
@@ -92,17 +92,76 @@ def smith_waterman_parallel(sequence1, sequence2, match, mismatch, gap, num_proc
     return alignment1, alignment2, score
 
 # Main function to execute the entire process
-def main():
+def main() -> None:
+    """
+    Main function to execute the entire parallel Smith-Waterman alignment processes
+    Handles user input and displays the alignment results
+    """
     try:
-        print("welcome to the Parallel Smith-Waterman Alignment Tool")
+        print("Welcome to the Parallel Smith-Waterman Alignment Tool")
 
-        sequence1 = input("Enter the first sequence: ").strip()
-        sequence2 = input("Enter the second sequence: ").strip()
+        while True:
+            sequence1 = input("Enter the first sequence: ").strip().upper()
+            try:
+                if not sequence1.isalpha():
+                    raise ValueError("The sequence contains non-letter characters")
+                if not all(c in "ATCGU" for c in sequence1) or not all(c in "ACDEFGHIKLMNPQRSTVWY" for c in sequence1):
+                    raise ValueError("Please enter a nucleotide or aminoacid sequence")
+                break
+            except ValueError as e:
+                print(f"Invalid input: {e}")
 
-        match = int(input("Enter the match score (positive integer): "))
-        mismatch = int(input("Enter the mismatch penalty (negative integer): "))
-        gap = int(input("Enter the gap penalty (negative integer): "))
-        num_processes = int(input(f"Enter the number of processes (1-{cpu_count()}): "))
+        while True:
+            sequence2 = input("Enter the first sequence: ").strip().upper()
+            try:
+                if not sequence2.isalpha():
+                    raise ValueError("The sequence contains non-letter characters")
+                if not all(c in "ATCG" for c in sequence2) or not all(c in "ACDEFGHIKLMNPQRSTVWY" for c in sequence2):
+                    raise ValueError("Please enter a nucleotide or aminoacid sequence")
+                break
+            except ValueError as e:
+                print(f"Invalid input: {e}")
+        
+        while True:
+            try:
+                match = int(input("Enter the match score (positive integer): "))
+                if match > 0:
+                    break
+                else:
+                    print("Invalid input: Please enter a positive integer")
+            except ValueError as e:
+                print(f"Invalid input: {e}")
+                
+        while True:
+            try:
+                mismatch = int(input("Enter the mismatch penalty (negative integer): "))
+                if mismatch < 0:
+                    break
+                else:
+                    print("Invalid input: Please enter a negative integer")
+            except ValueError as e:
+                print(f"Invalid input: {e}")
+
+        while True:
+            try:
+                gap = int(input("Enter the gap penalty (negative integer): "))
+                if gap < 0:
+                    break
+                else:
+                    print("Invalid input: Please enter a negative integer")
+            except ValueError as e:
+                print(f"Invalid input: {e}")
+
+        
+        while True:
+            try:
+                num_processes = int(input(f"Enter the number of processes (1-{cpu_count()}): "))
+                if 1 <= num_processes <= cpu_count():
+                    break
+                else:
+                    print(f"Invalid input: Please enter a number between 1 and {cpu_count()}")
+            except ValueError as e:
+                print(f"Invalid input: {e}")
 
         start_time = time.time()
         alignment1, alignment2, score = smith_waterman_parallel(sequence1, sequence2, match, mismatch, gap, num_processes)
