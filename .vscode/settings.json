@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.suggest.enabled": true,
+    "typescript.tsserver.web.projectWideIntellisense.enabled": true,
+    "editor.suggest.snippetsPreventQuickSuggestions": true,
+    "emmet.showSuggestionsAsSnippets": true,
+    "editor.snippets.codeActions.enabled": true
+}
