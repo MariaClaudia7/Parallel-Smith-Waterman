@@ -105,7 +105,11 @@ def main() -> None:
             try:
                 if not sequence1.isalpha():
                     raise ValueError("The sequence contains non-letter characters")
-                if not all(c in "ATCGU" for c in sequence1) or not all(c in "ACDEFGHIKLMNPQRSTVWY" for c in sequence1):
+                if all(c in "ATCG" for c in sequence1):
+                    sequence_type = "nucleotide"                
+                elif all(c in "ACDEFGHIKLMNPQRSTVWY" for c in sequence1):
+                    sequence_type = "aminoacid"
+                else:
                     raise ValueError("Please enter a nucleotide or aminoacid sequence")
                 break
             except ValueError as e:
@@ -116,8 +120,10 @@ def main() -> None:
             try:
                 if not sequence2.isalpha():
                     raise ValueError("The sequence contains non-letter characters")
-                if not all(c in "ATCG" for c in sequence2) or not all(c in "ACDEFGHIKLMNPQRSTVWY" for c in sequence2):
-                    raise ValueError("Please enter a nucleotide or aminoacid sequence")
+                if sequence_type == "nucleotide" and not all(c in "ATCGU" for c in sequence2):
+                    raise ValueError("Please enter a nucleotide sequence")
+                elif sequence_type == "aminoacid" and not all(c in "ACDEFGHIKLMNPQRSTVWY" for c in sequence2):
+                    raise ValueError("Please enter an aminoacid sequence")
                 break
             except ValueError as e:
                 print(f"Invalid input: {e}")
