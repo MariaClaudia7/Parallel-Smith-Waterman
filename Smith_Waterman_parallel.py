@@ -41,7 +41,7 @@ def traceback(scoring_matrix: np.ndarray, sequence1: str, sequence2: str, match:
     """
     Traceback through the scoring matrix to find the optimal local alignment
     """
-    i, j, = len(sequence1) - 1, len(sequence2) - 1
+    i, j, = np.unravel_index(scoring_matrix.argmax(), scoring_matrix.shape)
     alignment1, alignment2 = [], []
 
     while scoring_matrix[i, j] != 0:
